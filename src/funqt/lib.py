@@ -11,11 +11,15 @@ import shiboken
 
 SCRIPT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
+
 class classproperty(object):
-    def __init__(self, getter):
-        self.getter= getter
-    def __get__(self, instance, owner):
-        return self.getter(owner)
+    """http://stackoverflow.com/questions/5189699/how-can-i-make-a-class-property-in-python
+    """
+    def __init__(self, f):
+        self.f = f
+
+    def __get__(self, obj, owner):
+        return self.f(owner)
 
 class UiLoader(QUiLoader):
     """
@@ -83,8 +87,6 @@ def loadUi(uifile, baseinstance=None):
     widget = loader.load(uifile)
     QMetaObject.connectSlotsByName(widget)
     return widget
-
-
 
 
 def wrapInstance(ptr, base=None):

@@ -1,10 +1,29 @@
 from PySide import QtGui, QtCore
 import pymel.core as pm
 import maya.OpenMaya as om
+from funqt.widgets import GenericWidget
+from funqt.widgets.inputs import FloatField
+from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
 
-from funqt.sharedwidgets.inputs import FloatSlider, FloatField
-from maya.app.general.mayaMixin import MayaQWidgetDockableMixin as DockMixin
 
+class MayaGenericWidget(GenericWidget):
+    def __init__(self,*args,**kwargs):
+        super(MayaGenericWidget, self).__init__(*args,**kwargs)
+        self._initUI()
+        self._connectSignals()
+
+    def _initUI(self):
+        pass
+
+    def _connectSignals(self):
+        pass
+
+    @classmethod
+    def launch(cls,*args,**kwargs):
+        docked = kwargs.pop("docked", False)
+        ui = cls()
+        ui.show()
+        return ui
 
 class MayaAttrInput(QtCore.QObject):
     '''
@@ -45,11 +64,10 @@ class MayaAttrInput(QtCore.QObject):
             self._callbackId = None
 
 
-
-
 class FloatAttrField(FloatField, MayaAttrInput):
     def __init__(self, attr):
-        super(FloatField, self).__init__()
+        super(FloatAttrField, self).__init__()
+        self._isCallback = False
         self._init(attr)
         self.editingFinished.connect(self.setAttrVal)
 
@@ -57,10 +75,6 @@ class FloatAttrField(FloatField, MayaAttrInput):
         if not self._isCallback:
             self._isCallback = True
             self.setValue(self._attr.get())
-
-        # if self._attr:
-        #     currVal = self._attr.get()
-        # self.setValue(currVal)
 
     def closeEvent(self, *args, **kwargs):
         self.deleteEvent()
@@ -72,8 +86,6 @@ class FloatAttrField(FloatField, MayaAttrInput):
 
     def setAttrVal(self):
         val = self.getValue()
-        print self._isCallback
-        print "EHEHEHEHE"
         if not self._isCallback:
             self._attr.set(val)
 
@@ -82,5 +94,3 @@ class FloatAttrField(FloatField, MayaAttrInput):
 
         if self._isCallback:
             self._isCallback = False
-
-
