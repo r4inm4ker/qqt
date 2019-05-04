@@ -2,6 +2,12 @@ from ..base import QtWidgets, QtCore, QtGui, qcreate
 from ..layouts import VBoxLayout
 from .inputs import StringField
 
+# for python2 & 3 cross compatibility
+try:
+  basestring
+except NameError:
+  basestring = str
+
 
 class BaseList(QtWidgets.QWidget):
     itemSelectionChanged = QtCore.Signal(list)
@@ -79,9 +85,6 @@ class BaseList(QtWidgets.QWidget):
         else:
             self.filterField.setHidden(True)
             self.filterField.setFixedHeight(0)
-
-    # def selectedItems(self):
-    #     return [self.model.itemFromIndex(idx) for idx in self.selModel.selectedRows()]
 
     def selectAll(self):
         self.view.selectAll()
@@ -184,14 +187,11 @@ class TextList(BaseList):
             self.model.appendRow(item)
 
 
-
-
 class TextItem(QtGui.QStandardItem):
 
     def __init__(self,text,*args,**kwargs):
         self._text = kwargs.pop("data",None)
         super(TextItem, self).__init__(text,*args,**kwargs)
-
 
 
 class SimpleFilter(QtCore.QSortFilterProxyModel):
@@ -208,8 +208,6 @@ class SimpleFilter(QtCore.QSortFilterProxyModel):
     def setCaseSensitive(self, val):
         cs = QtCore.Qt.CaseSensitive if val else QtCore.Qt.CaseInsensitive
         self.setFilterCaseSensitivity(cs)
-
-
 
 
 class FileBrowser(BaseList):
@@ -239,14 +237,9 @@ class FileBrowser(BaseList):
 
     def _additionalSetup(self):
         pass
-        # self.filterModel.setFilterKeyColumn(0)
 
     def updateFilter(self):
         val = self.filterField.getValue()
-        # fil  = "*{}*".format(val)
-        # self.model.setFilter(QtCore.QDir.NoDotAndDotDot | QtCore.QDir.AllDirs )
-        # self.model.setNameFilters([fil])
-        # self.model.setNameFilterDisables(False)
 
         self.filterModel.setFilterRegExp(val)
         self.filterModel.setFilterKeyColumn(0)
@@ -254,13 +247,8 @@ class FileBrowser(BaseList):
 
 
 class FileTreeFilter(SimpleFilter):
-    pass
-    def filterAcceptsRow(self, *args, **kwargs):
-        # print "herere"
-        return False
-        return super(FileTreeFilter, self).filterAcceptsRow(*args, **kwargs)
 
-    # def filterAcceptsColumn(self, *args, **kwargs):
-    #     print "333"
-    #     return False
-    #     return super(FileTreeFilter, self).filterAcceptsColumn(*args, **kwargs)
+    def filterAcceptsRow(self, *args, **kwargs):
+        return False
+        # return super(FileTreeFilter, self).filterAcceptsRow(*args, **kwargs)
+
