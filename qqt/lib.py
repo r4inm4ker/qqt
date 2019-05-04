@@ -1,4 +1,11 @@
-from .base import QtCore,QtGui, QtWidgets, QMetaObject, QtCompat
+from .base import QtCore, QtGui, QtWidgets, QMetaObject, QtCompat
+
+# for python2 & 3 cross compatibility
+try:
+  basestring
+except NameError:
+  basestring = str
+
 
 class classproperty(object):
     """http://stackoverflow.com/questions/5189699/how-can-i-make-a-class-property-in-python
@@ -43,12 +50,13 @@ def pixmap(image,w=None,h=None,aspectRatioMode = QtCore.Qt.KeepAspectRatio):
         pic = QtGui.QPixmap(image)
     elif isinstance(image, QtGui.QPixmap):
         pic = image
+    else:
+        raise ValueError("image either need to be in filePath or pixmap")
+
     currW, currH = pic.width(), pic.height()
 
     if currW <=0 or currH <=0:
         return pic
-
-    newW, newH = None, None
 
     if w and not h:
         newW = w
@@ -62,7 +70,7 @@ def pixmap(image,w=None,h=None,aspectRatioMode = QtCore.Qt.KeepAspectRatio):
         if aspectRatioMode == QtCore.Qt.IgnoreAspectRatio:
             newW, newH = w, h
         else:
-            if w < h:
+            if currW > currH:
                 newH = 1.0 * w / currW * currH
                 newW = w
             else:
@@ -71,12 +79,7 @@ def pixmap(image,w=None,h=None,aspectRatioMode = QtCore.Qt.KeepAspectRatio):
     else:
         newW, newH = currW, currH
 
-
-
-
-    pic = pic.scaled(newW, newH)
-
-    return pic
+    return pic.scaled(newW, newH)
 
 
 def createToolBtn(text, parent=None, slot=None, shortcut=None, icon=None,
