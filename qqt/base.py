@@ -1,6 +1,5 @@
 from Qt import QtCore, QtGui, QtWidgets
 from Qt.QtCore import QMetaObject
-from Qt import QtCompat
 
 
 glob_current_active_parent = None

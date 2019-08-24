@@ -1,4 +1,4 @@
-from .base import QtCore, QtGui, QtWidgets, QMetaObject, QtCompat
+from .base import QtCore, QtGui, QtWidgets, QMetaObject
 
 # for python2 & 3 cross compatibility
 try:
@@ -6,6 +6,10 @@ try:
 except NameError:
   basestring = str
 
+try:
+    from shiboken import wrapInstance
+except:
+    from shiboken2 import wrapInstance
 
 class classproperty(object):
     """http://stackoverflow.com/questions/5189699/how-can-i-make-a-class-property-in-python
@@ -30,7 +34,7 @@ def loadUi(uifile, baseinstance=None):
     other words, if you've created a ``QMainWindow`` interface in the designer,
     ``baseinstance`` must be a ``QMainWindow`` or a subclass thereof, too.  You
     cannot load a ``QMainWindow`` UI file with a plain
-    :class:`~PySide.QtGui.QWidget` as ``baseinstance``.
+    :class:`~PySide.QtWidgets.QWidget` as ``baseinstance``.
 
     :method:`~PySide.QtCore.QMetaObject.connectSlotsByName()` is called on the
     created user interface, so you can implemented your slots according to its
@@ -103,3 +107,22 @@ def createToolBtn(text, parent=None, slot=None, shortcut=None, icon=None,
         parent.addAction(action)
 
     return action
+
+
+
+
+from functools import wraps
+
+
+def busyCursor(func):
+    """put busy cursor while processing """
+
+    @wraps(func)
+    def _func(*args, **kwargs):
+        try:
+            QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
+            return func(*args, **kwargs)
+        finally:
+            QtWidgets.QApplication.restoreOverrideCursor()
+
+    return _func

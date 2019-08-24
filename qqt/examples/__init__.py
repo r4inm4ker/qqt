@@ -5,7 +5,7 @@ from ..lib import createToolBtn
 def openFolder():
     pass
 
-mainWidget = QtGui.QWidget()
+mainWidget = QtWidgets.QWidget()
 
 layout = VBoxLayout(mainWidget)
 with layout:

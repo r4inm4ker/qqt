@@ -5,7 +5,7 @@ from qqt.gui import *
 
 
 
-class WidgetTester(QtGui.QWidget):
+class WidgetTester(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(WidgetTester, self).__init__(parent=parent)
         self._initUI()

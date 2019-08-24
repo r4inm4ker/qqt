@@ -6,6 +6,13 @@ from ..lib import pixmap
 
 Qt = QtCore.Qt
 
+class LabelPosition(object):
+    left = "left"
+    right = "right"
+    center = "center"
+    centre = "center"
+    bottom = "bottom"
+    top = "top"
 
 class InputMixin(QtCore.QObject):
     valueEdited = QtCore.Signal(str)
@@ -123,8 +130,10 @@ class StringField(QtWidgets.QLineEdit, InputMixin, LabelMixin):
         return str(self.text())
 
     def setValue(self, val):
-        self.setText(val)
-
+        if val:
+            self.setText(str(val))
+        else:
+            self.setText("")
 
 class Checkbox( QtWidgets.QCheckBox, InputMixin, LabelMixin):
     valueEdited = QtCore.Signal(bool)
@@ -159,7 +168,7 @@ class IconButton(QtWidgets.QPushButton, InputMixin, LabelMixin):
         self._icon = kwargs.pop('icon',None)
         self._width = kwargs.pop('w',30)
         self._height = kwargs.pop('h',30)
-        self._labelPos = kwargs.pop("labelPosition","left")
+        self._labelPos = kwargs.pop("labelPosition","bottom")
         self._label = kwargs.pop("label", None)
         super(IconButton, self).__init__(*args,**kwargs)
         self._initLayout()
@@ -181,6 +190,38 @@ class IconButton(QtWidgets.QPushButton, InputMixin, LabelMixin):
             fm = QtGui.QFontMetrics(font)
             tw = fm.width(self.labelWidget.text())
             self.labelWidget.setFixedWidth(tw)
+
+        if self._labelPos in(LabelPosition.bottom, LabelPosition.top):
+            from qqt.widgets.displays import Spacer
+            hlayout1 = HBoxLayout()
+            spacer = Spacer(mode="horizontal")
+            hlayout1.addItem(spacer)
+            hlayout1.addWidget(self)
+            spacer = Spacer(mode="horizontal")
+            hlayout1.addItem(spacer)
+
+            hlayout2 = HBoxLayout()
+            spacer = Spacer(mode="horizontal")
+            hlayout2.addItem(spacer)
+            hlayout2.addWidget(self.labelWidget)
+            self.labelWidget.setAlignment(QtCore.Qt.AlignCenter)
+            spacer = Spacer(mode="horizontal")
+            hlayout2.addItem(spacer)
+
+            if self._labelPos == LabelPosition.top:
+                self.parentLayout.insertLayout(0, hlayout2)
+                self.parentLayout.insertLayout(1, hlayout1)
+            elif self._labelPos == LabelPosition.bottom:
+                self.parentLayout.insertLayout(0, hlayout1)
+                self.parentLayout.insertLayout(1, hlayout2)
+
+
+            spacer = Spacer(mode="vertical")
+            self.parentLayout.addItem(spacer)
+
+
+
+
 
 
     def _connectSignals(self):
@@ -505,7 +546,7 @@ class NumericSliderField(QtWidgets.QWidget, InputMixin, LabelMixin):
     def _connectSignals(self):
         self.slider.sliderPressed.connect(self.updateField)
         self.slider.sliderMoved.connect(self.updateField)
-        self.field.textChanged.connect(self.fieldUpdated)
+        self.field.editingFinished.connect(self.fieldUpdated)
         self.minBtn.clicked.connect(partial(self.updateField,self.MIN_VAL))
         self.maxBtn.clicked.connect(partial(self.updateField,self.MAX_VAL))
 
@@ -561,7 +602,12 @@ class FloatSliderField(NumericSliderField):
         finally:
             self.field.setText(str(value))
 
-    def fieldUpdated(self, val):
+    def fieldUpdated(self, *args):
+        if len(args)>0:
+            val = args[0]
+        else:
+            val = self.field.getValue()
+
         self.valueEdited.emit(float(val))
 
 
@@ -604,7 +650,12 @@ class IntSliderField(NumericSliderField):
         finally:
             self.field.setText(str(value))
 
-    def fieldUpdated(self, val):
+    def fieldUpdated(self, *args):
+        if len(args)>0:
+            val = args[0]
+        else:
+            val = self.field.getValue()
+
         self.valueEdited.emit(int(val))
 
 class Slider(QtWidgets.QSlider):
