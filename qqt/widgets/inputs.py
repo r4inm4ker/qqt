@@ -33,7 +33,13 @@ class Button(QtWidgets.QPushButton, InputMixin, LabelMixin):
     def __init__(self,*args,**kwargs):
         self._labelPos = kwargs.pop("labelPosition","left")
         self._label = kwargs.pop("label",None)
+        icon = kwargs.pop("icon",None)
         super(Button, self).__init__(*args,**kwargs)
+        if icon:
+            if isinstance(icon,str):
+                icon = QtGui.QIcon(icon)
+            self.setIcon(icon)
+
         self._initLayout()
         self._connectSignals()
 
@@ -168,6 +174,7 @@ class IconButton(QtWidgets.QPushButton, InputMixin, LabelMixin):
         self._icon = kwargs.pop('icon',None)
         self._width = kwargs.pop('w',30)
         self._height = kwargs.pop('h',30)
+        self._bg_transparent = kwargs.pop('bg_transparent',True)
         self._labelPos = kwargs.pop("labelPosition","bottom")
         self._label = kwargs.pop("label", None)
         super(IconButton, self).__init__(*args,**kwargs)
@@ -219,10 +226,8 @@ class IconButton(QtWidgets.QPushButton, InputMixin, LabelMixin):
             spacer = Spacer(mode="vertical")
             self.parentLayout.addItem(spacer)
 
-
-
-
-
+        if self._bg_transparent:
+            self.setStyleSheet("background-color: rgba(0, 0, 0, 0);border:0;")
 
     def _connectSignals(self):
         pass

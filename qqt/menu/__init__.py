@@ -18,9 +18,15 @@ class ContextMenu(QtWidgets.QMenu):
         self._parent = parent
         setContextMenu(parent, self)
 
-    def addCommand(self,label,func):
+    def addCommand(self,label,func, icon=None):
         action = QtWidgets.QAction(self._parent)
         action.setText(label)
+
+        if icon:
+            if isinstance(icon, str):
+                icon = QtGui.QIcon(icon)
+            action.setIcon(icon)
+
         if func:
             action.triggered.connect(func)
         self.addAction(action)

@@ -6,6 +6,13 @@ glob_current_active_parent = None
 
 
 def qcreate(uiClass, *args, **kwargs):
+    """
+
+    :param uiClass:
+    :param args:
+    :param kwargs:
+    :return: uiClass
+    """
     from .widgets.base import LabelMixin
 
     global glob_current_active_parent

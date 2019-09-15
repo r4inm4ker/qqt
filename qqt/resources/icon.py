@@ -1,20 +1,42 @@
 import os
 
+try:
+    from pathlib import Path
+except ImportError:
+    from qqt.helper_lib.pathlib import Path
+
 class IconManager(object):
-    icon_dirs = []
-    icon_dirs.append()
+    dirs = []
 
     @classmethod
-    def get_icon(cls, iconName, **kwargs):
-        
+    def get(cls, iconName, **kwargs):
+        from qqt.base import QtGui, QtCore
         # TODO : to be completed
-        itype = kwargs.get("type","path")
-        size = kwargs.get("size",(20,20))
+        itype = kwargs.get("type","icon")
+        size = kwargs.get("size",None)
 
-        if itype == "path":
-            dirName = os.path.dirname(__file__)
-            # print(dirName)
-            iconDir = os.path.join(dirName,"icons")
-            iconPath = os.path.join(iconDir,iconName)
+        iconPath = ""
+        icon = None
 
-            return iconPath
+        for eachDir in cls.dirs:
+            checkPath = Path(eachDir) / iconName
+            if checkPath.exists():
+                iconPath = str(checkPath)
+                break
+
+        if itype == "icon":
+            icon =  QtGui.QIcon(iconPath)
+
+        elif itype == "pixmap":
+            icon = QtGui.QPixmap(iconPath)
+            if size:
+                icon = icon.scaled(size[0],size[1], aspectRatioMode=QtCore.Qt.KeepAspectRatio, transformMode=QtCore.Qt.SmoothTransformation)
+        elif itype == "path":
+            icon = iconPath
+
+        return icon
+
+
+    @classmethod
+    def addDir(cls, dirPath):
+        cls.dirs.append(dirPath)
