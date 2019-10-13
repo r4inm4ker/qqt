@@ -65,7 +65,7 @@ class Splitter(QtWidgets.QSplitter, LayoutMixin):
 
         super(Splitter, self).__init__(orient)
 
-        self.setStyleSheet('''QSplitter::handle:horizontal{border: 1px outset darkgrey;};QSplitter::handle:vertical{border: 1px outset darkgrey;}''')
+        # self.setStyleSheet('''QSplitter::handle:horizontal{border: 1px outset darkgrey;};QSplitter::handle:vertical{border: 1px outset darkgrey;}''')
 
 
 class TabLayout(QtWidgets.QTabWidget, LayoutMixin):
