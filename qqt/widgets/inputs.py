@@ -1,7 +1,7 @@
 from functools import partial
 from .. import QtGui, QtCore, QtWidgets, qcreate
 from ..layouts import VBoxLayout, HBoxLayout
-from .base import BaseWidget, LabelMixin
+from .base import LabelMixin
 from ..lib import pixmap
 
 Qt = QtCore.Qt
@@ -284,7 +284,7 @@ class NumericField(QtWidgets.QLineEdit, InputMixin, LabelMixin):
         raise NotImplemented("must implement setValue")
 
 
-class LabelledInput(BaseWidget, InputMixin):
+class LabelledInput(QtWidgets.QWidget, InputMixin):
     def __init__(self, *args, **kwargs):
         layout = kwargs.pop("layout", "horizontal")
         label = kwargs.pop("label", "")
