@@ -2,15 +2,7 @@ from ..base import QtGui, QtWidgets
 from ..layouts import HBoxLayout, VBoxLayout
 
 
-class BaseWidget(QtWidgets.QWidget):
-    @classmethod
-    def launch(cls, *args, **kwargs):
-        ui = cls()
-        ui.show()
-        return ui
-
-
-class GenericWidget(BaseWidget):
+class GenericWidget(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super(GenericWidget, self).__init__(*args, **kwargs)
         self._initUI()
@@ -21,6 +13,12 @@ class GenericWidget(BaseWidget):
 
     def _connectSignals(self):
         pass
+    
+    @classmethod
+    def launch(cls, *args, **kwargs):
+        ui = cls()
+        ui.show()
+        return ui
 
 
 class LabelMixin(object):

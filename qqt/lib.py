@@ -1,56 +1,34 @@
-from .base import QtCore, QtGui, QtWidgets, QMetaObject
+from functools import wraps
+
+from .base import QtCore, QtGui, QtWidgets, QMetaObject, QtCompat
 
 # for python2 & 3 cross compatibility
 try:
-  basestring
+    basestring
 except NameError:
-  basestring = str
+    basestring = str
 
 try:
     from shiboken import wrapInstance
 except:
     from shiboken2 import wrapInstance
 
+
 class classproperty(object):
     """http://stackoverflow.com/questions/5189699/how-can-i-make-a-class-property-in-python
     """
+
     def __init__(self, f):
         self.f = f
 
     def __get__(self, obj, owner):
         return self.f(owner)
 
-
-def loadUi(uifile, baseinstance=None):
-    """
-    Dynamically load a user interface from the given ``uifile``.
-
-    ``uifile`` is a string containing a file name of the UI file to load.
-
-    If ``baseinstance`` is ``None``, the a new instance of the top-level widget
-    will be created.  Otherwise, the user interface is created within the given
-    ``baseinstance``.  In this case ``baseinstance`` must be an instance of the
-    top-level widget class in the UI file to load, or a subclass thereof.  In
-    other words, if you've created a ``QMainWindow`` interface in the designer,
-    ``baseinstance`` must be a ``QMainWindow`` or a subclass thereof, too.  You
-    cannot load a ``QMainWindow`` UI file with a plain
-    :class:`~PySide.QtWidgets.QWidget` as ``baseinstance``.
-
-    :method:`~PySide.QtCore.QMetaObject.connectSlotsByName()` is called on the
-    created user interface, so you can implemented your slots according to its
-    conventions in your widget class.
-
-    Return ``baseinstance``, if ``baseinstance`` is not ``None``.  Otherwise
-    return the newly created instance of the user interface.
-    """
-    loader = UiLoader(baseinstance)
-    widget = loader.load(uifile)
-    QMetaObject.connectSlotsByName(widget)
-    return widget
+loadUi = QtCompat.loadUi
 
 
-def pixmap(image,w=None,h=None,aspectRatioMode = QtCore.Qt.KeepAspectRatio):
-    if isinstance(image,basestring):
+def pixmap(image, w=None, h=None, aspectRatioMode=QtCore.Qt.KeepAspectRatio):
+    if isinstance(image, basestring):
         pic = QtGui.QPixmap(image)
     elif isinstance(image, QtGui.QPixmap):
         pic = image
@@ -59,16 +37,16 @@ def pixmap(image,w=None,h=None,aspectRatioMode = QtCore.Qt.KeepAspectRatio):
 
     currW, currH = pic.width(), pic.height()
 
-    if currW <=0 or currH <=0:
+    if currW <= 0 or currH <= 0:
         return pic
 
     if w and not h:
         newW = w
-        newH = float(w)/currW * currH
+        newH = float(w) / currW * currH
 
     elif h and not w:
         newH = h
-        newW = float(h)/currH * currW
+        newW = float(h) / currH * currW
 
     elif w and h:
         if aspectRatioMode == QtCore.Qt.IgnoreAspectRatio:
@@ -90,9 +68,9 @@ def createToolBtn(text, parent=None, slot=None, shortcut=None, icon=None,
                   toolTip=None, checkable=False, size=32):
     action = QtWidgets.QAction(text, parent)
     if icon is not None:
-        pixmap = QtGui.QPixmap(icon)
-        pixmap.scaled(size,size)
-        action.setIcon(QtGui.QIcon(pixmap))
+        pix = QtGui.QPixmap(icon)
+        pix.scaled(size, size)
+        action.setIcon(QtGui.QIcon(pix))
     if shortcut is not None:
         action.setShortcut(shortcut)
     if toolTip is not None:
@@ -107,11 +85,6 @@ def createToolBtn(text, parent=None, slot=None, shortcut=None, icon=None,
         parent.addAction(action)
 
     return action
-
-
-
-
-from functools import wraps
 
 
 def busyCursor(func):

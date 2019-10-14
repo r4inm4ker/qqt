@@ -4,9 +4,9 @@ from .inputs import StringField
 
 # for python2 & 3 cross compatibility
 try:
-  basestring
+    basestring
 except NameError:
-  basestring = str
+    basestring = str
 
 
 class BaseList(QtWidgets.QWidget):
@@ -56,7 +56,7 @@ class BaseList(QtWidgets.QWidget):
         with self._layout:
             self.filterField = qcreate(StringField)
         self._layout.addWidget(self.view)
-        self._layout.setContentsMargins(0,0,0,0)
+        self._layout.setContentsMargins(0, 0, 0, 0)
 
     def refreshData(self):
         raise NotImplementedError('')
@@ -78,7 +78,7 @@ class BaseList(QtWidgets.QWidget):
         items = [self.model.itemFromIndex(idx) for idx in indexes if idx.column() == 0]
         return items
 
-    def showFilterField(self,mode):
+    def showFilterField(self, mode):
         if mode == True:
             self.filterField.setHidden(False)
             self.filterField.setFixedHeight(40)
@@ -96,7 +96,7 @@ class BaseList(QtWidgets.QWidget):
         items = []
         for idx in range(self.model.rowCount()):
             try:
-                item = self.model.item(idx,0)
+                item = self.model.item(idx, 0)
             except AttributeError:
                 continue
             if item:
@@ -107,14 +107,14 @@ class BaseList(QtWidgets.QWidget):
     def clearSelection(self):
         self.view.clearSelection()
 
-    def selectItem(self, item, selectionMode = QtCore.QItemSelectionModel.ClearAndSelect):
+    def selectItem(self, item, selectionMode=QtCore.QItemSelectionModel.ClearAndSelect):
         qi = self.model.indexFromItem(item)
         qi = self.filterModel.mapFromSource(qi)
         self.selModel.select(qi, selectionMode)
 
-    def deleteItem(self,item,*args):
+    def deleteItem(self, item, *args):
         for idx in range(self.model.rowCount()):
-            midx = self.model.index(idx,0)
+            midx = self.model.index(idx, 0)
             mitem = self.model.itemFromIndex(midx)
 
             if isinstance(item, QtGui.QStandardItem):
@@ -137,7 +137,6 @@ class BaseList(QtWidgets.QWidget):
         # self.filterModel.setFilter(val)
         self.filterModel.setFilterRegExp(val)
         self.filterModel.submit()
-
 
 
 class ItemDelegate(QtWidgets.QStyledItemDelegate):
@@ -189,9 +188,9 @@ class TextList(BaseList):
 
 class TextItem(QtGui.QStandardItem):
 
-    def __init__(self,text,*args,**kwargs):
-        self._text = kwargs.pop("data",None)
-        super(TextItem, self).__init__(text,*args,**kwargs)
+    def __init__(self, text, *args, **kwargs):
+        self._text = kwargs.pop("data", None)
+        super(TextItem, self).__init__(text, *args, **kwargs)
 
 
 class SimpleFilter(QtCore.QSortFilterProxyModel):
@@ -212,7 +211,7 @@ class SimpleFilter(QtCore.QSortFilterProxyModel):
 
 class FileBrowser(BaseList):
     def __init__(self, *args, **kwargs):
-        super(FileBrowser, self).__init__(*args,**kwargs)
+        super(FileBrowser, self).__init__(*args, **kwargs)
 
         self._additionalSetup()
 
@@ -251,4 +250,3 @@ class FileTreeFilter(SimpleFilter):
     def filterAcceptsRow(self, *args, **kwargs):
         return False
         # return super(FileTreeFilter, self).filterAcceptsRow(*args, **kwargs)
-

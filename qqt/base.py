@@ -1,7 +1,6 @@
 from Qt import QtCore, QtGui, QtWidgets, QtCompat
 from Qt.QtCore import QMetaObject
 
-
 glob_current_active_parent = None
 
 
@@ -17,15 +16,15 @@ def qcreate(uiClass, *args, **kwargs):
 
     global glob_current_active_parent
     layoutType = kwargs.pop("layoutType", None)
-    parent = kwargs.pop("parent",None)
+    parent = kwargs.pop("parent", None)
 
     if parent and issubclass(uiClass, QtWidgets.QLayout):
-        newObject = uiClass(parent,*args,**kwargs)
+        newObject = uiClass(parent, *args, **kwargs)
     else:
-        newObject = uiClass(*args,**kwargs)
+        newObject = uiClass(*args, **kwargs)
 
         tmpObject = None
-        if isinstance(newObject,LabelMixin):
+        if isinstance(newObject, LabelMixin):
             tmpObject = newObject
             if newObject.parentWidget:
                 newObject = newObject.parentWidget
@@ -34,7 +33,6 @@ def qcreate(uiClass, *args, **kwargs):
             if layoutType:
                 lay = layoutType()
                 newObject.setLayout(lay)
-
 
         par = glob_current_active_parent
         if par:

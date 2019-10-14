@@ -6,6 +6,7 @@ from ..lib import pixmap
 
 Qt = QtCore.Qt
 
+
 class LabelPosition(object):
     left = "left"
     right = "right"
@@ -13,6 +14,7 @@ class LabelPosition(object):
     centre = "center"
     bottom = "bottom"
     top = "top"
+
 
 class InputMixin(QtCore.QObject):
     valueEdited = QtCore.Signal(str)
@@ -29,14 +31,15 @@ class InputMixin(QtCore.QObject):
     def _connectSignals(self):
         pass
 
+
 class Button(QtWidgets.QPushButton, InputMixin, LabelMixin):
-    def __init__(self,*args,**kwargs):
-        self._labelPos = kwargs.pop("labelPosition","left")
-        self._label = kwargs.pop("label",None)
-        icon = kwargs.pop("icon",None)
-        super(Button, self).__init__(*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        self._labelPos = kwargs.pop("labelPosition", "left")
+        self._label = kwargs.pop("label", None)
+        icon = kwargs.pop("icon", None)
+        super(Button, self).__init__(*args, **kwargs)
         if icon:
-            if isinstance(icon,str):
+            if isinstance(icon, str):
                 icon = QtGui.QIcon(icon)
             self.setIcon(icon)
 
@@ -51,9 +54,9 @@ class ComboBox(QtWidgets.QComboBox, InputMixin, LabelMixin):
     valueEdited = QtCore.Signal(int)
 
     def __init__(self, *args, **kwargs):
-        self._labelPos = kwargs.pop("labelPosition","left")
-        self._label = kwargs.pop("label",None)
-        width = kwargs.pop("width",None)
+        self._labelPos = kwargs.pop("labelPosition", "left")
+        self._label = kwargs.pop("label", None)
+        width = kwargs.pop("width", None)
         super(ComboBox, self).__init__(*args, **kwargs)
         if width:
             self.setMinimumWidth(width)
@@ -63,16 +66,16 @@ class ComboBox(QtWidgets.QComboBox, InputMixin, LabelMixin):
     def _connectSignals(self):
         self.currentIndexChanged.connect(self.emitValueEdited)
 
-    def emitValueEdited(self,index):
+    def emitValueEdited(self, index):
         self.valueEdited.emit(index)
 
     def setItems(self, items, data=None):
-        data = data or [None]*len(items)
+        data = data or [None] * len(items)
         while self.count() > 0:
             for idx in range(self.count()):
                 self.removeItem(idx)
 
-        for item,dt in zip(items,data):
+        for item, dt in zip(items, data):
             self.addItem(item, data)
 
     def items(self):
@@ -82,7 +85,7 @@ class ComboBox(QtWidgets.QComboBox, InputMixin, LabelMixin):
         return items
 
     def addItem(self, item, data=None):
-        QtWidgets.QComboBox.addItem(self,str(item))
+        QtWidgets.QComboBox.addItem(self, str(item))
         idx = self.count() - 1
         data = data if data is not None else item
         self.setItemData(idx, data)
@@ -108,20 +111,21 @@ class ComboBox(QtWidgets.QComboBox, InputMixin, LabelMixin):
 
     def setValueFromData(self, data):
         idx = self.findData(data)
-        if idx >=0:
+        if idx >= 0:
             self.setCurrentIndex(idx)
         else:
             raise ValueError("wrong or nonexistent data provided.")
 
         self.valueEdited.emit(idx)
 
+
 class StringField(QtWidgets.QLineEdit, InputMixin, LabelMixin):
     valueEdited = QtCore.Signal(str)
 
-    def __init__(self,*args,**kwargs):
-        self._labelPos = kwargs.pop("labelPosition","left")
-        self._label = kwargs.pop("label",None)
-        super(StringField, self).__init__(*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        self._labelPos = kwargs.pop("labelPosition", "left")
+        self._label = kwargs.pop("label", None)
+        super(StringField, self).__init__(*args, **kwargs)
         self._initLayout()
         self._connectSignals()
 
@@ -141,14 +145,15 @@ class StringField(QtWidgets.QLineEdit, InputMixin, LabelMixin):
         else:
             self.setText("")
 
-class Checkbox( QtWidgets.QCheckBox, InputMixin, LabelMixin):
+
+class Checkbox(QtWidgets.QCheckBox, InputMixin, LabelMixin):
     valueEdited = QtCore.Signal(bool)
 
-    def __init__(self,*args,**kwargs):
-        self._labelPos = kwargs.pop("labelPosition","left")
-        self._label = kwargs.pop("label",None)
+    def __init__(self, *args, **kwargs):
+        self._labelPos = kwargs.pop("labelPosition", "left")
+        self._label = kwargs.pop("label", None)
         default = kwargs.pop("default", True)
-        super(Checkbox, self).__init__(*args,**kwargs)
+        super(Checkbox, self).__init__(*args, **kwargs)
         self._initLayout()
 
         if self._labelPos == "left":
@@ -166,22 +171,22 @@ class Checkbox( QtWidgets.QCheckBox, InputMixin, LabelMixin):
     def getValue(self):
         return self.isChecked()
 
-    def setValue(self,val):
+    def setValue(self, val):
         self.setChecked(val)
 
+
 class IconButton(QtWidgets.QPushButton, InputMixin, LabelMixin):
-    def __init__(self,*args,**kwargs):
-        self._icon = kwargs.pop('icon',None)
-        self._width = kwargs.pop('w',30)
-        self._height = kwargs.pop('h',30)
-        self._bg_transparent = kwargs.pop('bg_transparent',True)
-        self._labelPos = kwargs.pop("labelPosition","bottom")
+    def __init__(self, *args, **kwargs):
+        self._icon = kwargs.pop('icon', None)
+        self._width = kwargs.pop('w', 30)
+        self._height = kwargs.pop('h', 30)
+        self._bg_transparent = kwargs.pop('bg_transparent', True)
+        self._labelPos = kwargs.pop("labelPosition", "bottom")
         self._label = kwargs.pop("label", None)
-        super(IconButton, self).__init__(*args,**kwargs)
+        super(IconButton, self).__init__(*args, **kwargs)
         self._initLayout()
         self._connectSignals()
         self._additionalSetup()
-
 
     def _additionalSetup(self):
         w, h = self._width, self._height
@@ -190,7 +195,7 @@ class IconButton(QtWidgets.QPushButton, InputMixin, LabelMixin):
         self.setFixedHeight(h)
         icon = QtGui.QIcon(pix)
         self.setIcon(icon)
-        self.setIconSize(QtCore.QSize(w,h))
+        self.setIconSize(QtCore.QSize(w, h))
 
         if self.labelWidget:
             font = self.labelWidget.font()
@@ -198,7 +203,7 @@ class IconButton(QtWidgets.QPushButton, InputMixin, LabelMixin):
             tw = fm.width(self.labelWidget.text())
             self.labelWidget.setFixedWidth(tw)
 
-        if self._labelPos in(LabelPosition.bottom, LabelPosition.top):
+        if self._labelPos in (LabelPosition.bottom, LabelPosition.top):
             from qqt.widgets.displays import Spacer
             hlayout1 = HBoxLayout()
             spacer = Spacer(mode="horizontal")
@@ -222,7 +227,6 @@ class IconButton(QtWidgets.QPushButton, InputMixin, LabelMixin):
                 self.parentLayout.insertLayout(0, hlayout1)
                 self.parentLayout.insertLayout(1, hlayout2)
 
-
             spacer = Spacer(mode="vertical")
             self.parentLayout.addItem(spacer)
 
@@ -233,15 +237,15 @@ class IconButton(QtWidgets.QPushButton, InputMixin, LabelMixin):
         pass
 
 
-class NumericField(QtWidgets.QLineEdit,InputMixin, LabelMixin):
-    def __init__(self,*args, **kwargs):
+class NumericField(QtWidgets.QLineEdit, InputMixin, LabelMixin):
+    def __init__(self, *args, **kwargs):
         minimum = kwargs.pop("minimum", None)
         maximum = kwargs.pop("maximum", None)
-        self._width = kwargs.pop("width",None)
-        self._defaultValue = kwargs.pop("defaultValue",None)
-        self._labelPos = kwargs.pop("labelPosition","left")
-        self._label = kwargs.pop("label",None)
-        super(NumericField, self).__init__(*args,**kwargs)
+        self._width = kwargs.pop("width", None)
+        self._defaultValue = kwargs.pop("defaultValue", None)
+        self._labelPos = kwargs.pop("labelPosition", "left")
+        self._label = kwargs.pop("label", None)
+        super(NumericField, self).__init__(*args, **kwargs)
         self._initLayout()
         self._connectSignals()
         self._validator = None
@@ -282,9 +286,9 @@ class NumericField(QtWidgets.QLineEdit,InputMixin, LabelMixin):
 
 class LabelledInput(BaseWidget, InputMixin):
     def __init__(self, *args, **kwargs):
-        layout = kwargs.pop("layout","horizontal")
-        label = kwargs.pop("label","")
-        parent = kwargs.pop("parent",None)
+        layout = kwargs.pop("layout", "horizontal")
+        label = kwargs.pop("label", "")
+        parent = kwargs.pop("parent", None)
 
         super(LabelledInput, self).__init__(parent)
 
@@ -300,16 +304,16 @@ class LabelledInput(BaseWidget, InputMixin):
 
             if layout == "horizontal":
                 if label:
-                    self._label = qcreate(QtWidgets.QLabel,label)
-                self._inputWidget = qcreate(self.inputClass,*args,**kwargs)
+                    self._label = qcreate(QtWidgets.QLabel, label)
+                self._inputWidget = qcreate(self.inputClass, *args, **kwargs)
             elif layout == "vertical":
-                self._inputWidget = qcreate(self.inputClass,*args,**kwargs)
+                self._inputWidget = qcreate(self.inputClass, *args, **kwargs)
                 if label:
-                    self._label = qcreate(QtWidgets.QLabel,label)
+                    self._label = qcreate(QtWidgets.QLabel, label)
                     self._label.setAlignment(Qt.AlignHCenter)
 
         if self._label:
-            self._label.setSizePolicy(QtWidgets.QSizePolicy.Fixed,QtWidgets.QSizePolicy.Fixed)
+            self._label.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
 
         #
         # for attr in (name for name in dir(self) if not name.startswith('_')):
@@ -399,15 +403,15 @@ class FloatField(NumericField):
             self.valueEdited.emit(value)
 
 
-class ColorInput(QtWidgets.QPushButton,InputMixin, LabelMixin):
+class ColorInput(QtWidgets.QPushButton, InputMixin, LabelMixin):
     valueEdited = QtCore.Signal(QtGui.QColor)
     defaultColor = QtGui.QColor(198, 128, 128)
     sizePol = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
 
     def __init__(self, *args, **kwargs):
-        self._labelPos = kwargs.pop("labelPosition","left")
-        self._label = kwargs.pop("label",None)
-        super(ColorInput, self).__init__(*args,**kwargs)
+        self._labelPos = kwargs.pop("labelPosition", "left")
+        self._label = kwargs.pop("label", None)
+        super(ColorInput, self).__init__(*args, **kwargs)
         self._initLayout()
         self._connectSignals()
 
@@ -437,22 +441,22 @@ class ColorInput(QtWidgets.QPushButton,InputMixin, LabelMixin):
             self.valueEdited.emit(retColor)
 
 
-class RadioButtonGroup(QtWidgets.QWidget,InputMixin, LabelMixin):
+class RadioButtonGroup(QtWidgets.QWidget, InputMixin, LabelMixin):
     valueEdited = QtCore.Signal(str)
+
     def __init__(self, *args, **kwargs):
-        self._labelPos = kwargs.pop("labelPosition","left")
-        self._label = kwargs.pop("label",None)
-        super(RadioButtonGroup, self).__init__(*args,**kwargs)
+        self._labelPos = kwargs.pop("labelPosition", "left")
+        self._label = kwargs.pop("label", None)
+        super(RadioButtonGroup, self).__init__(*args, **kwargs)
         self._initLayout()
         self._connectSignals()
         # self._btnList = []
         self._btnGrp = QtWidgets.QButtonGroup(self)
         self._btnGrp.setExclusive(True)
         self._layout = HBoxLayout(self)
-        self._layout.setContentsMargins(0,0,0,0)
+        self._layout.setContentsMargins(0, 0, 0, 0)
         self._layout.setSpacing(2)
         self._btnGrp.buttonClicked.connect(self.emitValueEdited)
-
 
     def addOption(self, label, data=None):
         rb = QtWidgets.QRadioButton(text=label)
@@ -468,16 +472,13 @@ class RadioButtonGroup(QtWidgets.QWidget,InputMixin, LabelMixin):
         }
         ''')
 
-
-
-
         # self._btnList.append(rb)
 
-    def setIndex(self,idx):
+    def setIndex(self, idx):
         if self._btnGrp.buttons():
             self._btnGrp.buttons()[idx].setChecked(True)
 
-    def setValue(self,label):
+    def setValue(self, label):
         for btn in self._btnGrp.buttons():
             if btn.text() == label:
                 btn.setChecked(True)
@@ -512,14 +513,13 @@ class NumericSliderField(QtWidgets.QWidget, InputMixin, LabelMixin):
     def fieldClass(self):
         return FloatField
 
-    def __init__(self, *args,**kwargs):
-        self.MIN_VAL = kwargs.pop("minVal",self.DEFAULT_MIN)
-        self.MAX_VAL = kwargs.pop("maxVal",self.DEFAULT_MAX)
-        self._labelPos = kwargs.pop("labelPosition","left")
-        self._label = kwargs.pop("label",None)
-        super(NumericSliderField, self).__init__(*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        self.MIN_VAL = kwargs.pop("minVal", self.DEFAULT_MIN)
+        self.MAX_VAL = kwargs.pop("maxVal", self.DEFAULT_MAX)
+        self._labelPos = kwargs.pop("labelPosition", "left")
+        self._label = kwargs.pop("label", None)
+        super(NumericSliderField, self).__init__(*args, **kwargs)
         self._initLayout()
-
 
         self.layout = QtWidgets.QHBoxLayout()
         self.layout.setSpacing(0)
@@ -537,7 +537,7 @@ class NumericSliderField(QtWidgets.QWidget, InputMixin, LabelMixin):
 
         self.slider = Slider()
         self.slider.setOrientation(Qt.Horizontal)
-        self.slider.setContentsMargins(0,0,0,0)
+        self.slider.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.slider)
 
         self.maxBtn = QtWidgets.QPushButton()
@@ -552,8 +552,8 @@ class NumericSliderField(QtWidgets.QWidget, InputMixin, LabelMixin):
         self.slider.sliderPressed.connect(self.updateField)
         self.slider.sliderMoved.connect(self.updateField)
         self.field.editingFinished.connect(self.fieldUpdated)
-        self.minBtn.clicked.connect(partial(self.updateField,self.MIN_VAL))
-        self.maxBtn.clicked.connect(partial(self.updateField,self.MAX_VAL))
+        self.minBtn.clicked.connect(partial(self.updateField, self.MIN_VAL))
+        self.maxBtn.clicked.connect(partial(self.updateField, self.MAX_VAL))
 
     def getValue(self):
         raise NotImplementedError()
@@ -567,25 +567,26 @@ class NumericSliderField(QtWidgets.QWidget, InputMixin, LabelMixin):
     def updateField(self, val=None):
         raise NotImplementedError()
 
+
 class FloatSliderField(NumericSliderField):
     MIN_INT = -100
     MAX_INT = 100
     DEFAULT_MIN = 0.0
     DEFAULT_MAX = 1.0
 
-    def __init__(self,*args,**kwargs):
-        super(FloatSliderField, self).__init__(*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        super(FloatSliderField, self).__init__(*args, **kwargs)
         self.slider.setMinimum(self.MIN_INT)
         self.slider.setMaximum(self.MAX_INT)
-        self.minBtn.clicked.connect(partial(self.updateField,self.MIN_INT))
-        self.maxBtn.clicked.connect(partial(self.updateField,self.MAX_INT))
+        self.minBtn.clicked.connect(partial(self.updateField, self.MIN_INT))
+        self.maxBtn.clicked.connect(partial(self.updateField, self.MAX_INT))
 
-    def updateField(self,val=None):
+    def updateField(self, val=None):
         if val is not None:
             self.slider.setValue(val)
         val = val or self.slider.value()
 
-        newVal = (1.0*(val - self.MIN_INT) / (self.MAX_INT - self.MIN_INT)) * (self.MAX_VAL - self.MIN_VAL) + self.MIN_VAL
+        newVal = (1.0 * (val - self.MIN_INT) / (self.MAX_INT - self.MIN_INT)) * (self.MAX_VAL - self.MIN_VAL) + self.MIN_VAL
 
         self.field.setText(str(newVal))
         self.valueEdited.emit(newVal)
@@ -608,7 +609,7 @@ class FloatSliderField(NumericSliderField):
             self.field.setText(str(value))
 
     def fieldUpdated(self, *args):
-        if len(args)>0:
+        if len(args) > 0:
             val = args[0]
         else:
             val = self.field.getValue()
@@ -624,19 +625,18 @@ class IntSliderField(NumericSliderField):
     def fieldClass(self):
         return IntField
 
-    def __init__(self,*args,**kwargs):
-        super(IntSliderField, self).__init__(*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        super(IntSliderField, self).__init__(*args, **kwargs)
         self.slider.setMinimum(self.MIN_VAL)
         self.slider.setMaximum(self.MAX_VAL)
 
-    def updateField(self,val=None):
+    def updateField(self, val=None):
         if val is not None:
             self.slider.setValue(val)
         val = val or self.slider.value()
 
         self.field.setText(str(val))
         self.valueEdited.emit(val)
-
 
     def getValue(self):
         text = self.field.text()
@@ -656,20 +656,20 @@ class IntSliderField(NumericSliderField):
             self.field.setText(str(value))
 
     def fieldUpdated(self, *args):
-        if len(args)>0:
+        if len(args) > 0:
             val = args[0]
         else:
             val = self.field.getValue()
 
         self.valueEdited.emit(int(val))
 
+
 class Slider(QtWidgets.QSlider):
     editStarted = QtCore.Signal()
     editEnded = QtCore.Signal()
 
-    def __init__(self,*args,**kwargs):
+    def __init__(self, *args, **kwargs):
         super(Slider, self).__init__(*args, **kwargs)
-
 
     def mousePressEvent(self, event):
         QtWidgets.QSlider.mousePressEvent(self, event)
@@ -678,9 +678,3 @@ class Slider(QtWidgets.QSlider):
     def mouseReleaseEvent(self, event):
         QtWidgets.QSlider.mouseReleaseEvent(self, event)
         self.editEnded.emit()
-
-
-
-
-
-
