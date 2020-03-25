@@ -109,6 +109,14 @@ class ComboBox(QtWidgets.QComboBox, InputMixin, LabelMixin):
             raise ValueError("wrong or nonexistent value provided.")
         self.valueEdited.emit(idx)
 
+    def indexFromData(self, data):
+        all_data = [self.getData(index=idx) for idx in range(self.count())]
+        try:
+            idx = all_data.index(data)
+            return idx
+        except ValueError:
+            return -1
+
     def setValueFromData(self, data):
         idx = self.findData(data)
         if idx >= 0:
@@ -204,7 +212,7 @@ class IconButton(QtWidgets.QPushButton, InputMixin, LabelMixin):
             self.labelWidget.setFixedWidth(tw)
 
         if self._labelPos in (LabelPosition.bottom, LabelPosition.top):
-            from qqt.widgets.displays import Spacer
+            from ..widgets.displays import Spacer
             hlayout1 = HBoxLayout()
             spacer = Spacer(mode="horizontal")
             hlayout1.addItem(spacer)

@@ -21,9 +21,10 @@ class Image(QtWidgets.QLabel):
         self.clicked.emit()
 
     def setImage(self, img, w=None, h=None):
-        pic = pixmap(img, w=w, h=h)
-        self.setPixmap(pic)
-        return pic
+        if not isinstance(img, QtGui.QPixmap):
+            img = pixmap(img, w=w, h=h)
+        self.setPixmap(img)
+        return img
 
 
 class Spacer(QtWidgets.QSpacerItem):
