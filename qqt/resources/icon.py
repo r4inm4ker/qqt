@@ -3,7 +3,7 @@ from Qt import QtCore, QtGui
 try:
     from pathlib import Path
 except ImportError:
-    from qqt.helper_lib.pathlib import Path
+    from ..helper_lib.pathlib import Path
 
 
 class IconManager(object):
