@@ -26,6 +26,14 @@ class LayoutMixin(object):
         lastChild = self.count() - 1
         self.setStretch(lastChild, val)
 
+    def add(self, child):
+        if isinstance(child, QtWidgets.QSpacerItem):
+            self.addSpacerItem(child)
+        elif isinstance(child, QtWidgets.QWidget):
+            self.addWidget(child)
+        elif isinstance(child, QtWidgets.QLayout):
+            self.addLayout(child)
+
 
 class VBoxLayout(QtWidgets.QVBoxLayout, LayoutMixin):
     pass
