@@ -184,11 +184,10 @@ class Checkbox(QtWidgets.QCheckBox, InputMixin, LabelMixin):
 
 
 class IconButton(QtWidgets.QPushButton, InputMixin, LabelMixin):
-    def __init__(self, *args, **kwargs):
-        self._icon = kwargs.pop('icon', None)
+    def __init__(self, icon, *args, **kwargs):
+        self._icon = icon
         self._width = kwargs.pop('w', 30)
         self._height = kwargs.pop('h', 30)
-        self._bg_transparent = kwargs.pop('bg_transparent', True)
         self._labelPos = kwargs.pop("labelPosition", "bottom")
         self._label = kwargs.pop("label", None)
         super(IconButton, self).__init__(*args, **kwargs)
@@ -198,48 +197,46 @@ class IconButton(QtWidgets.QPushButton, InputMixin, LabelMixin):
 
     def _additionalSetup(self):
         w, h = self._width, self._height
-        pix = pixmap(self._icon, w, h)
+        pix = pixmap(self._icon)
         self.setFixedWidth(w)
         self.setFixedHeight(h)
         icon = QtGui.QIcon(pix)
         self.setIcon(icon)
         self.setIconSize(QtCore.QSize(w, h))
-
+        self.setFlat(True)
+        
         if self.labelWidget:
             font = self.labelWidget.font()
             fm = QtGui.QFontMetrics(font)
             tw = fm.width(self.labelWidget.text())
             self.labelWidget.setFixedWidth(tw)
 
-        if self._labelPos in (LabelPosition.bottom, LabelPosition.top):
-            from ..widgets.displays import Spacer
-            hlayout1 = HBoxLayout()
-            spacer = Spacer(mode="horizontal")
-            hlayout1.addItem(spacer)
-            hlayout1.addWidget(self)
-            spacer = Spacer(mode="horizontal")
-            hlayout1.addItem(spacer)
+            if self._labelPos in (LabelPosition.bottom, LabelPosition.top):
+                from ..widgets.displays import Spacer
+                hlayout1 = HBoxLayout()
+                spacer = Spacer(mode="horizontal")
+                hlayout1.addItem(spacer)
+                hlayout1.addWidget(self)
+                spacer = Spacer(mode="horizontal")
+                hlayout1.addItem(spacer)
 
-            hlayout2 = HBoxLayout()
-            spacer = Spacer(mode="horizontal")
-            hlayout2.addItem(spacer)
-            hlayout2.addWidget(self.labelWidget)
-            self.labelWidget.setAlignment(QtCore.Qt.AlignCenter)
-            spacer = Spacer(mode="horizontal")
-            hlayout2.addItem(spacer)
+                hlayout2 = HBoxLayout()
+                spacer = Spacer(mode="horizontal")
+                hlayout2.addItem(spacer)
+                hlayout2.addWidget(self.labelWidget)
+                self.labelWidget.setAlignment(QtCore.Qt.AlignCenter)
+                spacer = Spacer(mode="horizontal")
+                hlayout2.addItem(spacer)
 
-            if self._labelPos == LabelPosition.top:
-                self.parentLayout.insertLayout(0, hlayout2)
-                self.parentLayout.insertLayout(1, hlayout1)
-            elif self._labelPos == LabelPosition.bottom:
-                self.parentLayout.insertLayout(0, hlayout1)
-                self.parentLayout.insertLayout(1, hlayout2)
+                if self._labelPos == LabelPosition.top:
+                    self.parentLayout.insertLayout(0, hlayout2)
+                    self.parentLayout.insertLayout(1, hlayout1)
+                elif self._labelPos == LabelPosition.bottom:
+                    self.parentLayout.insertLayout(0, hlayout1)
+                    self.parentLayout.insertLayout(1, hlayout2)
 
-            spacer = Spacer(mode="vertical")
-            self.parentLayout.addItem(spacer)
-
-        if self._bg_transparent:
-            self.setStyleSheet("background-color: rgba(0, 0, 0, 0);border:0;")
+                spacer = Spacer(mode="vertical")
+                self.parentLayout.addItem(spacer)
 
     def _connectSignals(self):
         pass
