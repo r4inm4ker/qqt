@@ -118,7 +118,7 @@ class ComboBox(QtWidgets.QComboBox, InputMixin, LabelMixin):
             return -1
 
     def setValueFromData(self, data):
-        idx = self.findData(data)
+        idx = self.indexFromData(data)
         if idx >= 0:
             self.setCurrentIndex(idx)
         else:
