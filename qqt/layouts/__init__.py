@@ -27,12 +27,17 @@ class LayoutMixin(object):
         self.setStretch(lastChild, val)
 
     def add(self, child):
-        if isinstance(child, QtWidgets.QSpacerItem):
-            self.addSpacerItem(child)
-        elif isinstance(child, QtWidgets.QWidget):
-            self.addWidget(child)
-        elif isinstance(child, QtWidgets.QLayout):
-            self.addLayout(child)
+        from ..widgets.base import LabelMixin
+        if isinstance(child,LabelMixin) and child.parentWidget is not None:
+            self.add(child.parentWidget)
+            return
+        else:
+            if isinstance(child, QtWidgets.QSpacerItem):
+                self.addSpacerItem(child)
+            elif isinstance(child, QtWidgets.QWidget):
+                self.addWidget(child)
+            elif isinstance(child, QtWidgets.QLayout):
+                self.addLayout(child)
 
 
 class VBoxLayout(QtWidgets.QVBoxLayout, LayoutMixin):
